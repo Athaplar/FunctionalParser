@@ -1,4 +1,4 @@
-import Parser.{Input, Result, Success}
+import Parser.{Failure, Input, Result, Success}
 import Parsers.{charParser, digit}
 import org.scalatest.FlatSpec
 
@@ -11,7 +11,7 @@ class ParsersSpec extends FlatSpec {
     result match {
       case Success(current, remainder) =>
         assert(current == 'c')
-        assert(remainder == Input("cd", isEnd = false, 1))
+        assert(remainder == Input("cd", 1))
 
     }
   }
@@ -24,11 +24,11 @@ class ParsersSpec extends FlatSpec {
     result match {
       case Success(current, remainder) =>
         assert(current == 1)
-        assert(remainder == Input("123", isEnd = false, 1))
+        assert(remainder == Input("123", 1))
     }
   }
 
-  "Other combinators" should "work" in {
+  "Basic parser chaining with flatMap" should "work" in {
 
     println(charParser('1').flatMap(digit)(Input("11")))
 
@@ -45,6 +45,28 @@ class ParsersSpec extends FlatSpec {
     } yield (x, y)
 
     println(forComprehension(Input("cb")))
+
+  }
+
+  "many extension" should "work" in {
+
+    val result: Result[Seq[Char]] =
+      Parsers.many(charParser('a'))(Input("aa"))
+
+    result match {
+      case Success(current, remainder) =>
+        println(s"$current $remainder")
+        assert(current == Seq('a', 'a'))
+        assert(remainder == Input("aa", 2))
+      case Failure(reason) => fail(reason)
+    }
+  }
+
+  "test bed" should "" in {
+
+    val list = 2 :: 3 :: Nil
+
+    println(list)
 
   }
 
