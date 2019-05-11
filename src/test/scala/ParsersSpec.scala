@@ -51,13 +51,13 @@ class ParsersSpec extends FlatSpec {
   "many extension" should "work" in {
 
     val result: Result[Seq[Char]] =
-      Parsers.many(charParser('a'))(Input("aa"))
+      Parsers.many(charParser('a'))(Input("aab"))
 
     result match {
       case Success(current, remainder) =>
         println(s"$current $remainder")
         assert(current == Seq('a', 'a'))
-        assert(remainder == Input("aa", 2))
+        assert(remainder == Input("aab", 2))
       case Failure(reason) => fail(reason)
     }
   }
