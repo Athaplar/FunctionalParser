@@ -2,8 +2,7 @@ import Parser._
 
 object Parsers {
 
-
-  def char1(predicate: Char => Boolean): Parser[Char] = new Parser[Char] {
+  def char(predicate: Char => Boolean): Parser[Char] = new Parser[Char] {
 
     override def apply(input: Input): Result[Char] =
       if (predicate(input.current)) {
@@ -11,8 +10,8 @@ object Parsers {
       } else Failure("Failed")
   }
 
-  def char(c: Char) = char1(i => i == c)
+  def charParser(c: Char) = char(i => i == c)
 
-  def digit(c: Char) = char1(x => x.isDigit)
+  def digit(c: Char) = char(x => x.isDigit)
 
 }
