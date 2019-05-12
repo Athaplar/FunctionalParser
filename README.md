@@ -1,2 +1,2 @@
 # FunctionalParser
-Parser combinators
+functionalParsers.Parser combinators

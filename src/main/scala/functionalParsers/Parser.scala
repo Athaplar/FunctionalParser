@@ -1,4 +1,6 @@
-import Parser.{Failure, Input, Result, Success}
+package functionalParsers
+
+import functionalParsers.Parser.{Failure, Input, Result, Success}
 
 trait Parser[T] {
   self =>

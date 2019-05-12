@@ -1,8 +1,9 @@
-import Parser.{Failure, Input, Result, Success}
-import Parsers.{charParser, digit}
+import functionalParsers.{Combinator, Parser}
+import functionalParsers.Combinator.{charParser, digit}
+import functionalParsers.Parser.{Failure, Input, Result, Success}
 import org.scalatest.FlatSpec
 
-class ParsersSpec extends FlatSpec {
+class CombinatorSpec extends FlatSpec {
 
   "A single character parsing" should "work" in {
 
@@ -27,7 +28,7 @@ class ParsersSpec extends FlatSpec {
     }
   }
 
-  "map combinator on Parser" should "work" in {
+  "map combinator on functionalParsers.Parser" should "work" in {
 
     val result: Result[Int] =
       charParser('1').map(_.toString.toInt)(Input("123"))
@@ -62,7 +63,7 @@ class ParsersSpec extends FlatSpec {
   "many extension" should "succeeds" in {
 
     val result: Result[Seq[Char]] =
-      Parsers.many(charParser('a'))(Input("aab"))
+      Combinator.many(charParser('a'))(Input("aab"))
 
     result match {
       case Success(current, remainder) =>
@@ -76,7 +77,7 @@ class ParsersSpec extends FlatSpec {
   "many extension1" should "succeed" in {
 
     val result: Result[Seq[Char]] =
-      Parsers.many(charParser('a'))(Input("bbb"))
+      Combinator.many(charParser('a'))(Input("bbb"))
 
     result match {
       case Success(current, remainder) =>
@@ -91,7 +92,7 @@ class ParsersSpec extends FlatSpec {
 
     val parser = for {
       a <- charParser('a')
-      b <- Parsers.many(charParser('b'))
+      b <- Combinator.many(charParser('b'))
       c <- charParser('c')
 
     } yield (a, b, c)
@@ -101,10 +102,10 @@ class ParsersSpec extends FlatSpec {
 
   "atleastOnce" should "work" in {
 
-    val parser1: Parser[Seq[Char]] = Parsers.atLeastOnce(charParser('a'))
+    val parser1: Parser[Seq[Char]] = Combinator.atLeastOnce(charParser('a'))
     val parser2 = for {
       as <- parser1
-      bs <- Parsers.atLeastOnce(charParser('b'))
+      bs <- Combinator.atLeastOnce(charParser('b'))
     } yield (as, bs)
 
     println(parser1(Input("aab")))

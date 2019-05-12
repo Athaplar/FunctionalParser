@@ -1,8 +1,10 @@
-import Parser._
+package functionalParsers
+
+import functionalParsers.Parser.{Failure, Input, Result, Success}
 
 import scala.collection.mutable.ListBuffer
 
-object Parsers {
+object Combinator {
 
   def char(predicate: Char => Boolean): Parser[Char] = new Parser[Char] {
 
@@ -44,7 +46,7 @@ object Parsers {
       b <- many(parser)
     } yield a +: b
 
-  /*def once(parser: Parser[Char]): Parser[Char] =
+  /*def once(parser: functionalParsers.Parser[Char]): functionalParsers.Parser[Char] =
     input => {
 
       val result: Result[Char] = parser(input)
