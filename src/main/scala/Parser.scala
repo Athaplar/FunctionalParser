@@ -18,6 +18,12 @@ trait Parser[T] {
         case Success(value: T, remainder: Input) => f(value)(remainder)
         case Failure(reason)                     => Failure(reason)
     }
+  /*
+//TODO
+  def foldLeft[B](z: B)(op: (B, T) => B): B = {
+
+    ???
+  }*/
 
 }
 
@@ -34,10 +40,11 @@ object Parser {
     def current: Char = source(position)
   }
 
-  sealed abstract class Result[T]
+  sealed abstract class Result[T](val hasFailed: Boolean)
 
-  case class Success[T](current: T, remainder: Input) extends Result[T]
+  case class Success[T](current: T, remainder: Input)
+      extends Result[T](hasFailed = false)
 
-  case class Failure[T](reason: String) extends Result[T]
+  case class Failure[T](reason: String) extends Result[T](hasFailed = true)
 
 }

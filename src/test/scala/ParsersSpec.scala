@@ -16,6 +16,17 @@ class ParsersSpec extends FlatSpec {
     }
   }
 
+  "A single character parsing" should "result in Failure" in {
+
+    val result: Result[Char] = charParser('c')(Input("d"))
+
+    result match {
+      case Success(current, remainder) =>
+        fail()
+      case Failure(_) => println("Failed as expected")
+    }
+  }
+
   "map combinator on Parser" should "work" in {
 
     val result: Result[Int] =
@@ -48,7 +59,7 @@ class ParsersSpec extends FlatSpec {
 
   }
 
-  "many extension" should "work" in {
+  "many extension" should "succeeds" in {
 
     val result: Result[Seq[Char]] =
       Parsers.many(charParser('a'))(Input("aab"))
@@ -60,6 +71,47 @@ class ParsersSpec extends FlatSpec {
         assert(remainder == Input("aab", 2))
       case Failure(reason) => fail(reason)
     }
+  }
+
+  "many extension1" should "succeed" in {
+
+    val result: Result[Seq[Char]] =
+      Parsers.many(charParser('a'))(Input("bbb"))
+
+    result match {
+      case Success(current, remainder) =>
+        println(s"$current $remainder")
+        assert(current == Seq())
+        assert(remainder == Input("bbb", 0))
+      case Failure(reason) => fail(reason)
+    }
+  }
+
+  "for comprehension with many" should "succeed" in {
+
+    val parser = for {
+      a <- charParser('a')
+      b <- Parsers.many(charParser('b'))
+      c <- charParser('c')
+
+    } yield (a, b, c)
+
+    println(parser(Input("abbbbbbbc")))
+  }
+
+  "atleastOnce" should "work" in {
+
+    val parser1: Parser[Seq[Char]] = Parsers.atLeastOnce(charParser('a'))
+    val parser2 = for {
+      as <- parser1
+      bs <- Parsers.atLeastOnce(charParser('b'))
+    } yield (as, bs)
+
+    println(parser1(Input("aab")))
+    println(parser1(Input("bbb")))
+    println("------------")
+    println(parser2(Input("aaabbbb")))
+    println(parser2(Input("aaa")))
   }
 
   "test bed" should "" in {

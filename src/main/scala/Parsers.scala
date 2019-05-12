@@ -24,18 +24,33 @@ object Parsers {
     input => {
 
       var list = ListBuffer[Char]()
-      var resultRemainder = input
+      var remainingInput = input
       var flag = true
       while (flag) {
 
-        parser(resultRemainder) match {
+        parser(remainingInput) match {
           case Success(current, remainder) =>
             list = list :+ current
-            resultRemainder = remainder
+            remainingInput = remainder
           case Failure(_) => flag = false
         }
       }
-      if (list.nonEmpty) Success(list.toList, resultRemainder) else Failure("")
+      Success(list.toList, remainingInput)
     }
+
+  def atLeastOnce(parser: Parser[Char]): Parser[Seq[Char]] =
+    for {
+      a <- parser
+      b <- many(parser)
+    } yield a +: b
+
+  /*def once(parser: Parser[Char]): Parser[Char] =
+    input => {
+
+      val result: Result[Char] = parser(input)
+      if (result.hasFailed) {}
+
+      ???
+    }*/
 
 }
