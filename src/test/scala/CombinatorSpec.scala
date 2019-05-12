@@ -1,6 +1,7 @@
-import functionalParsers.{Combinator, Parser}
 import functionalParsers.Combinator.{charParser, digit}
+import functionalParsers.Parser
 import functionalParsers.Parser.{Failure, Input, Result, Success}
+import functionalParsers.ParserExtensions._
 import org.scalatest.FlatSpec
 
 class CombinatorSpec extends FlatSpec {
@@ -63,7 +64,7 @@ class CombinatorSpec extends FlatSpec {
   "many extension" should "succeeds" in {
 
     val result: Result[Seq[Char]] =
-      Combinator.many(charParser('a'))(Input("aab"))
+      charParser('a').many()(Input("aab"))
 
     result match {
       case Success(current, remainder) =>
@@ -77,7 +78,7 @@ class CombinatorSpec extends FlatSpec {
   "many extension1" should "succeed" in {
 
     val result: Result[Seq[Char]] =
-      Combinator.many(charParser('a'))(Input("bbb"))
+      charParser('a').many()(Input("bbb"))
 
     result match {
       case Success(current, remainder) =>
@@ -92,7 +93,7 @@ class CombinatorSpec extends FlatSpec {
 
     val parser = for {
       a <- charParser('a')
-      b <- Combinator.many(charParser('b'))
+      b <- charParser('b').many()
       c <- charParser('c')
 
     } yield (a, b, c)
@@ -102,10 +103,10 @@ class CombinatorSpec extends FlatSpec {
 
   "atleastOnce" should "work" in {
 
-    val parser1: Parser[Seq[Char]] = Combinator.atLeastOnce(charParser('a'))
+    val parser1: Parser[Seq[Char]] = charParser('a').atLeastOnce()
     val parser2 = for {
       as <- parser1
-      bs <- Combinator.atLeastOnce(charParser('b'))
+      bs <- charParser('b').atLeastOnce()
     } yield (as, bs)
 
     println(parser1(Input("aab")))

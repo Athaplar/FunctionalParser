@@ -2,8 +2,6 @@ package functionalParsers
 
 import functionalParsers.Parser.{Failure, Input, Result, Success}
 
-import scala.collection.mutable.ListBuffer
-
 object Combinator {
 
   def char(predicate: Char => Boolean): Parser[Char] = new Parser[Char] {
@@ -21,38 +19,5 @@ object Combinator {
   def charParser(c: Char) = char(i => i == c)
 
   def digit(c: Char) = char(x => x.isDigit)
-
-  def many(parser: Parser[Char]): Parser[Seq[Char]] =
-    input => {
-
-      var list = ListBuffer[Char]()
-      var remainingInput = input
-      var flag = true
-      while (flag) {
-
-        parser(remainingInput) match {
-          case Success(current, remainder) =>
-            list = list :+ current
-            remainingInput = remainder
-          case Failure(_) => flag = false
-        }
-      }
-      Success(list.toList, remainingInput)
-    }
-
-  def atLeastOnce(parser: Parser[Char]): Parser[Seq[Char]] =
-    for {
-      a <- parser
-      b <- many(parser)
-    } yield a +: b
-
-  /*def once(parser: functionalParsers.Parser[Char]): functionalParsers.Parser[Char] =
-    input => {
-
-      val result: Result[Char] = parser(input)
-      if (result.hasFailed) {}
-
-      ???
-    }*/
 
 }
