@@ -6,7 +6,36 @@ import scala.collection.mutable.ListBuffer
 
 object ParserExtensions {
 
+  def sequence[T](parsers: Seq[Parser[T]]): Parser[Seq[T]] = {
+
+    val result: Parser[Seq[T]] =
+      parsers.foldLeft(point(Seq[T]()))((agg, curr) => {
+        val aggResult: Parser[Seq[T]] = agg.flatMap(x => curr.map(y => x :+ y))
+        aggResult
+      })
+
+    result
+  }
+
+  def point[T](t: T): Parser[T] = input => Success(t, input)
+
   implicit class RichParser[T](val parser: Parser[T]) {
+
+    def or(next: Parser[T]): Parser[T] = input => {
+      parser(input) match {
+        case s @ Success(_, _) => s
+        case Failure(_)        => next(input)
+      }
+    }
+
+    def end(): Parser[T] = input => {
+      parser(input) match {
+        case s @ Success(_, remainder) =>
+          if (remainder.isEnd) s else Failure("Text did not end!")
+        case Failure(reason) => Failure(s"Parsing error s$reason")
+      }
+
+    }
 
     def atLeastOnce(): Parser[Seq[T]] =
       for {
