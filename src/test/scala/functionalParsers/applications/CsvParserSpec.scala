@@ -9,21 +9,25 @@ class CsvParserSpec extends FlatSpec {
 
   //TODO: csv edge cases
 
-  "csvValue x,y" should "get parsed" in {
+  "A csvline without newline" should "get parsed" in {
     val valueParser: Parser[String] = csvValue()
-    val input = Input(",x,y,z")
+    val input = Input("x,y,z")
     println(valueParser.many()(input))
     // println(deLimitedCsvValue()(input))
   }
 
-  "\"x,y,z\" csv Line" should "get parsed" in {
+  "A csv Line ending with newline" should "get parsed" in {
 
     val csvParser = csvValue().many()
-    val input = Input(",x,y,z" + System.lineSeparator())
-
+    val input = Input("x,y,z" + System.lineSeparator())
     println(csvParser(input))
-    //Get the first Line and iterate Line to assert [0] - z, [1] - y and [2]- z
+  }
 
+  " 2 csv Line" should "get parsed" in {
+
+    val csvParser = csvValue().many()
+    val input = Input("x,y,z" + System.lineSeparator() + "a,b,c")
+    println(csvParser(input))
   }
 
 }

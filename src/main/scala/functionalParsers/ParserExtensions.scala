@@ -19,9 +19,13 @@ object ParserExtensions {
 
   def point[T](t: T): Parser[T] = input => Success(t, input)
 
-  def except()
+  implicit class RichParser1[T](val parser: Parser[Seq[T]]) {
 
-  implicit class RichParser[T](val parser: Parser[T]) {
+    def text(): Parser[String] = parser.map(_.mkString)
+
+  }
+
+  implicit class RichParser2[T](val parser: Parser[T]) {
 
     def or(next: Parser[T]): Parser[T] = input => {
       parser(input) match {
@@ -38,13 +42,6 @@ object ParserExtensions {
       }
 
     }
-    /*
-    def atMostOnce(): Parser[T] = input => {
-      parser(input) match {
-        case s @ Success(_, _) => s
-        case Failure(_)        => Success(input.source(input.position), input)
-      }
-    }*/
 
     def atLeastOnce(): Parser[Seq[T]] =
       for {
@@ -52,7 +49,17 @@ object ParserExtensions {
         b <- many()
       } yield a +: b
 
-    def except(c: Char) = Combinator.except(c)
+    // def except(c: Char) = Combinator.except(c)
+
+    def expect[B](parserB: Parser[B]): Parser[T] = input => {
+
+      val result = parserB(input)
+
+      result match {
+        case Success(_, _) => Failure(" except parser was suppose to not pass")
+        case Failure(_)    => parser(input)
+      }
+    }
 
     def many(): Parser[Seq[T]] =
       input => {

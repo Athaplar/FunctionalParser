@@ -19,16 +19,9 @@ object Combinator {
 
   def digit(c: Char) = char(_.isDigit)
 
-  //def newline(c: Char) = char(x => x == System.lineSeparator())
-
   def anyChar() = char(_ => true)
 
-  def except(c: Char) = char(_ != c)
-
   def newLine(): Parser[Seq[Char]] = stringParser(System.lineSeparator())
-
-  def toText(parsers: Parser[Seq[Char]]): Parser[String] =
-    parsers.map(_.mkString)
 
   def stringParser(string: String): Parser[Seq[Char]] = {
     val charParsingResult: Seq[Parser[Char]] = string.map(charParser)
