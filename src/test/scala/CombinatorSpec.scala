@@ -1,6 +1,5 @@
 import functionalParsers.Combinator.{charParser, digit}
-import functionalParsers.Parser
-import functionalParsers.Parser.{Failure, Input, Result, Success}
+import functionalParsers.Parser._
 import functionalParsers.ParserExtensions._
 import org.scalatest.FlatSpec
 

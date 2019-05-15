@@ -1,6 +1,6 @@
 package functionalParsers
 
-import functionalParsers.Parser.{Failure, Input, Result, Success}
+import functionalParsers.Parser.{Failure, Input, Parser, Result, Success}
 object Combinator {
 
   def char(predicate: Char => Boolean): Parser[Char] = new Parser[Char] {
