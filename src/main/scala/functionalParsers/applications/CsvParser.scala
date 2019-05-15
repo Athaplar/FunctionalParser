@@ -4,10 +4,8 @@ import functionalParsers.Combinator._
 import functionalParsers.Parser
 import functionalParsers.ParserExtensions._
 
-object CsvParser extends App {
+object CsvParser {
 
-  val result: Seq[String] = "asa" +: Seq("asas")
-  println(result)
   type Line = Seq[String]
   val DeLimiter = ','
 
@@ -21,8 +19,10 @@ object CsvParser extends App {
     } yield head +: rest
 
   def csvValue(): Parser[String] =
-    anyChar().many().expect(csvDelimiter()).expect(newLine()).text()
+    anyChar().expect(csvDelimiter()).expect(newLine()).many().text()
 
   def csvDelimiter(): Parser[Char] = charParser(DeLimiter)
 
 }
+
+object CsvParserTest extends App {}
