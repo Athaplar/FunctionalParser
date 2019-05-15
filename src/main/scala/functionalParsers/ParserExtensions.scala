@@ -1,6 +1,6 @@
 package functionalParsers
 
-import functionalParsers.Parser.{Failure, Success}
+import functionalParsers.Parser.{Failure, Input, Parser, Success}
 
 import scala.collection.mutable.ListBuffer
 
@@ -27,6 +27,21 @@ object ParserExtensions {
 
   implicit class RichParser2[T](val parser: Parser[T]) {
 
+    def map[B](f: T => B): Parser[B] =
+      input =>
+        parser(input) match {
+          case Success(value: T, remainder: Input) =>
+            Success(f(value), remainder)
+          case Failure(reason) => Failure(reason)
+      }
+
+    def flatMap[B](f: T => Parser[B]): Parser[B] =
+      input =>
+        parser(input) match {
+          case Success(value: T, remainder: Input) => f(value)(remainder)
+          case Failure(reason)                     => Failure(reason)
+      }
+
     def or(next: Parser[T]): Parser[T] = input => {
       parser(input) match {
         case s @ Success(_, _) => s
@@ -48,8 +63,6 @@ object ParserExtensions {
         a <- parser
         b <- many()
       } yield a +: b
-
-    // def except(c: Char) = Combinator.except(c)
 
     def expect[B](parserB: Parser[B]): Parser[T] = input => {
 

@@ -1,7 +1,7 @@
 package functionalParsers.applications
 
 import functionalParsers.Combinator._
-import functionalParsers.Parser
+import functionalParsers.Parser.{Input, Parser}
 import functionalParsers.ParserExtensions._
 
 object CsvParser {
@@ -22,7 +22,14 @@ object CsvParser {
     anyChar().expect(csvDelimiter()).expect(newLine()).many().text()
 
   def csvDelimiter(): Parser[Char] = charParser(DeLimiter)
-
 }
 
-object CsvParserTest extends App {}
+object CsvParserTest extends App {
+  import CsvParser._
+
+  val input = Input("x,y,z" + System.lineSeparator())
+  println(csvParser()(input))
+
+  //type Parser[T] = Input => Result[T]
+
+}

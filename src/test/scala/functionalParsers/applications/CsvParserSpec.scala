@@ -1,7 +1,6 @@
 package functionalParsers.applications
 
-import functionalParsers.Parser
-import functionalParsers.Parser.Input
+import functionalParsers.Parser.{Input, Parser}
 import functionalParsers.applications.CsvParser._
 import org.scalatest.FlatSpec
 class CsvParserSpec extends FlatSpec {

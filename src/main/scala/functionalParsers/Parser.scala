@@ -1,35 +1,8 @@
 package functionalParsers
 
-import functionalParsers.Parser.{Failure, Input, Result, Success}
-
-trait Parser[T] {
-  self =>
-
-  def apply(input: Input): Result[T]
-
-  def map[B](f: T => B): Parser[B] =
-    i =>
-      self.apply(i) match {
-        case Success(value: T, remainder: Input) => Success(f(value), remainder)
-        case Failure(reason)                     => Failure(reason)
-    }
-
-  def flatMap[B](f: T => Parser[B]): Parser[B] =
-    i =>
-      self.apply(i) match {
-        case Success(value: T, remainder: Input) => f(value)(remainder)
-        case Failure(reason)                     => Failure(reason)
-    }
-  /*
-//TODO
-  def foldLeft[B](z: B)(op: (B, T) => B): B = {
-
-    ???
-  }*/
-
-}
-
 object Parser {
+
+  type Parser[T] = Input => Result[T]
 
   case class Input(source: String, position: Int = 0) {
 
