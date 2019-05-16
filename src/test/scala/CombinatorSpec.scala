@@ -1,4 +1,4 @@
-import functionalParsers.Combinator.{charParser, digit}
+import functionalParsers.Combinator.{char, digit}
 import functionalParsers.Parser._
 import functionalParsers.ParserExtensions._
 import org.scalatest.FlatSpec
@@ -7,7 +7,7 @@ class CombinatorSpec extends FlatSpec {
 
   "A single character parsing" should "work" in {
 
-    val result: Result[Char] = charParser('c')(Input("cd"))
+    val result: Result[Char] = char('c')(Input("cd"))
 
     result match {
       case Success(current, remainder) =>
@@ -19,7 +19,7 @@ class CombinatorSpec extends FlatSpec {
 
   "A single character parsing" should "result in Failure" in {
 
-    val result: Result[Char] = charParser('c')(Input("d"))
+    val result: Result[Char] = char('c')(Input("d"))
 
     result match {
       case Success(current, remainder) =>
@@ -31,7 +31,7 @@ class CombinatorSpec extends FlatSpec {
   "map combinator on functionalParsers.Parser" should "work" in {
 
     val result: Result[Int] =
-      charParser('1').map(_.toString.toInt)(Input("123"))
+      char('1').map(_.toString.toInt)(Input("123"))
 
     result match {
       case Success(current, remainder) =>
@@ -42,18 +42,18 @@ class CombinatorSpec extends FlatSpec {
 
   "Basic parser chaining with flatMap" should "work" in {
 
-    println(charParser('1').flatMap(digit)(Input("11")))
+    println(char('1').flatMap(digit)(Input("11")))
 
     val nestedFlatMap: Parser[(Char, Char)] =
-      charParser('c').flatMap(x => charParser('b').map(y => (x, y)))
+      char('c').flatMap(x => char('b').map(y => (x, y)))
 
     println(nestedFlatMap(Input("cb")))
 
     //for-comprehension
 
     val forComprehension: Parser[(Char, Char)] = for {
-      x <- charParser('c')
-      y <- charParser('b')
+      x <- char('c')
+      y <- char('b')
     } yield (x, y)
 
     println(forComprehension(Input("cb")))
@@ -63,7 +63,7 @@ class CombinatorSpec extends FlatSpec {
   "many extension" should "succeeds" in {
 
     val result: Result[Seq[Char]] =
-      charParser('a').many()(Input("aab"))
+      char('a').many()(Input("aab"))
 
     result match {
       case Success(current, remainder) =>
@@ -77,7 +77,7 @@ class CombinatorSpec extends FlatSpec {
   "many extension1" should "succeed" in {
 
     val result: Result[Seq[Char]] =
-      charParser('a').many()(Input("bbb"))
+      char('a').many()(Input("bbb"))
 
     result match {
       case Success(current, remainder) =>
@@ -91,9 +91,9 @@ class CombinatorSpec extends FlatSpec {
   "for comprehension with many" should "succeed" in {
 
     val parser = for {
-      a <- charParser('a')
-      b <- charParser('b').many()
-      c <- charParser('c')
+      a <- char('a')
+      b <- char('b').many()
+      c <- char('c')
 
     } yield (a, b, c)
 
@@ -102,10 +102,10 @@ class CombinatorSpec extends FlatSpec {
 
   "atleastOnce" should "work" in {
 
-    val parser1: Parser[Seq[Char]] = charParser('a').atLeastOnce()
+    val parser1: Parser[Seq[Char]] = char('a').atLeastOnce()
     val parser2 = for {
       as <- parser1
-      bs <- charParser('b').atLeastOnce()
+      bs <- char('b').atLeastOnce()
     } yield (as, bs)
 
     println(parser1(Input("aab")))

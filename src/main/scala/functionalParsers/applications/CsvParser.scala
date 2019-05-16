@@ -21,7 +21,7 @@ object CsvParser {
   def csvValue(): Parser[String] =
     anyChar().expect(csvDelimiter()).expect(newLine()).many().text()
 
-  def csvDelimiter(): Parser[Char] = charParser(DeLimiter)
+  def csvDelimiter(): Parser[Char] = char(DeLimiter)
 }
 
 object CsvParserTest extends App {
