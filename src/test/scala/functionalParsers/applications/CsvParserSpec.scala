@@ -28,4 +28,11 @@ class CsvParserSpec extends FlatSpec {
     println(csvParser(input))
   }
 
+  " 2 csv Line both ending with newline" should "get parsed" in {
+
+    val csvParser = CsvParser.csvParser()
+    val input =
+      Input("x,y,z" + System.lineSeparator() + "a,b,c" + System.lineSeparator())
+    println(csvParser(input))
+  }
 }
